@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+mlruns/
+*.egg-info/
+.pytest_cache/
+data/*.csv
+!data/.gitkeep
+eval/eval_report.json
+.DS_Store
