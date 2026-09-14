@@ -1,5 +1,9 @@
 # SentinelAML
 
+[![CI](https://github.com/Sh-reddie/SentinelAML/actions/workflows/ci.yml/badge.svg)](https://github.com/Sh-reddie/SentinelAML/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](requirements.txt)
+
 A multi-agent transaction-fraud investigation system that goes one step past
 scoring a transaction: it investigates the flagged case, drafts the
 Suspicious Activity Report (SAR) narrative a compliance analyst would
@@ -24,16 +28,17 @@ the LLM is trusted to self-report -- see `src/agents/critic.py`.
 ```
                               ┌────────────┐
                     escalate  │   triage   │  dismiss
-              ┌──────────────┤            ├───────────────┐
+              ┌──────────────┤            ├──────────────┐
               │               └────────────┘               │
               v                                             v
-      ┌───────────────┐                            ┌─────────────────┐
+      ┌───────────────┐
+                            ┌─────────────────┐
       │  investigator  │                            │ finalize_dismiss │──> END
-      └──────┬───────┘                            └─────────────────┘
+      └───────┬────────┘                            └─────────────────┘
               v
-      ┌───────────────┐   revise    ┌────────────┐
+      ┌────────────────┐   revise    ┌────────────┐
       │   narrative    │<────────────┤   critic   │
-      └───────┬────────┘             └─────┬──────┘
+      └──────────┬────────┘             └───────┬──────┘
               │                             │ approved
               v                             v
       (loops back to narrative      ┌──────────────────┐
@@ -113,7 +118,7 @@ uvicorn src.api:app --reload  # POST /investigate, GET /health
 | Full pipeline (triage decision) | 0.80 | 1.00 | 0.89 |
 
 Mean citation accuracy across every SAR draft produced: **1.00**. Outcome mix:
-4 dismissed, 20 approved, 0 escalated to human review, 0 average revisions
+(4 dismissed, 20 approved, 0 escalated to human review, 0 average revisions
 needed -- expected in mock mode, since the deterministic mock never
 hallucinates a citation in the first place. `tests/test_critic_citation_guard.py`
 exercises the rejection path directly, by constructing a draft that cites a
